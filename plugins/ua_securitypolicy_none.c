@@ -66,18 +66,24 @@ generateKey_none(const UA_SecurityPolicy *securityPolicy,
     return UA_STATUSCODE_GOOD;
 }
 
+/* Use the non-cryptographic RNG to set the nonce */
 static UA_StatusCode
-generateNonce_none(const UA_SecurityPolicy *securityPolicy,
-                   UA_ByteString *out) {
+generateNonce_none(const UA_SecurityPolicy *securityPolicy, UA_ByteString *out) {
     if(securityPolicy == NULL || out == NULL)
         return UA_STATUSCODE_BADINTERNALERROR;
-    if(out->length != 0)
-        return UA_STATUSCODE_BADINTERNALERROR;
 
-    if(out->data != NULL)
-        UA_ByteString_deleteMembers(out);
+    /* Fill blocks of four byte */
+    size_t i = 0;
+    while(i + 3 < out->length) {
+        UA_UInt32 rand = UA_UInt32_random();
+        memcpy(&out->data[i], &rand, 4);
+        i = i+4;
+    }
 
-    out->data = (UA_Byte *)UA_EMPTY_ARRAY_SENTINEL;
+    /* Fill the remaining byte */
+    UA_UInt32 rand = UA_UInt32_random();
+    memcpy(&out->data[i], &rand, out->length % 4);
+
     return UA_STATUSCODE_GOOD;
 }
 
@@ -96,17 +102,6 @@ static UA_StatusCode
 setContextValue_none(void *channelContext,
                      const UA_ByteString *key) {
     return UA_STATUSCODE_GOOD;
-}
-
-static size_t
-getRemoteAsymPlainTextBlockSize_none(const void *channelContext) {
-    return 0;
-}
-
-static size_t
-getRemoteAsymEncryptionBufferLengthOverhead_none(const void *channelContext,
-                                                 size_t maxEncryptionLength) {
-    return 0;
 }
 
 static UA_StatusCode
@@ -173,9 +168,6 @@ UA_SecurityPolicy_None(UA_SecurityPolicy *policy, UA_CertificateVerification *ce
     policy->channelModule.setRemoteSymSigningKey = setContextValue_none;
     policy->channelModule.setRemoteSymIv = setContextValue_none;
     policy->channelModule.compareCertificate = compareCertificate_none;
-    policy->channelModule.getRemoteAsymPlainTextBlockSize = getRemoteAsymPlainTextBlockSize_none;
-    policy->channelModule.getRemoteAsymEncryptionBufferLengthOverhead =
-        getRemoteAsymEncryptionBufferLengthOverhead_none;
     policy->deleteMembers = policy_deletemembers_none;
 
     return UA_STATUSCODE_GOOD;

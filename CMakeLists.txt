@@ -250,13 +250,13 @@ if(NOT UA_COMPILE_AS_CXX AND (CMAKE_COMPILER_IS_GNUCC OR "x${CMAKE_C_COMPILER_ID
         remove_definitions(-Werror -Wpedantic -Wno-static-in-inline -fPIC)
         add_definitions(-D_WRS_KERNEL)
     endif()
-    
+
     if(UA_FREERTOS)
        SET(UA_FREERTOS_INCLUDES "" CACHE STRING "Folders to include from the freeRTOS OS")
        include_directories(${UA_FREERTOS_INCLUDES})
         # Disable flags for freeRTOS
         remove_definitions(-fPIC -Wconversion )
-        add_definitions(-DUA_FREERTOS -DLWIP_TIMEVAL_PRIVATE=0 -DLWIP_COMPAT_MUTEX=0 -DLWIP_POSIX_SOCKETS_IO_NAMES=0 -mcpu=cortex-m3 -mthumb -g -Wall -O0 -specs=nano.specs 
+        add_definitions(-DUA_FREERTOS -DLWIP_TIMEVAL_PRIVATE=0 -DLWIP_COMPAT_MUTEX=0 -DLWIP_POSIX_SOCKETS_IO_NAMES=0 -mcpu=cortex-m3 -mthumb -g -Wall -O0 -specs=nano.specs
                         -ffunction-sections -fdata-sections  -fno-exceptions -fstack-usage -Wno-unused-variable -Wno-format -Wno-format-security -Wno-format-nonliteral)
         list(APPEND open62541_LIBRARIES c m stdc++ supc++)
     endif(UA_FREERTOS)
@@ -300,7 +300,7 @@ endif()
 if(MSVC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W3 /WX /w44996") # Compiler warnings, error on warning
 
-  if(NOT BUILD_SHARED_LIB)
+  if(NOT BUILD_SHARED_LIBS)
     set(CompilerFlags CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_C_FLAGS
         CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE)
     foreach(CompilerFlag ${CompilerFlags})
