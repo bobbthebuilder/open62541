@@ -62,7 +62,7 @@ option(UA_ENABLE_COVERAGE "Enable gcov coverage" OFF)
 option(BUILD_SHARED_LIBS "Enable building of shared libraries (dll/so)" OFF)
 
 # Encryption Options
-option(UA_ENABLE_ENCRYPTION "Enable encryption support (uses mbedTLS)" OFF)
+option(UA_ENABLE_ENCRYPTION "Enable encryption support (uses mbedTLS)" ON)
 
 if(UA_ENABLE_COVERAGE)
   set(CMAKE_BUILD_TYPE DEBUG)
@@ -438,6 +438,10 @@ if(UA_ENABLE_ENCRYPTION)
             ${PROJECT_SOURCE_DIR}/plugins/ua_securitypolicy_basic128rsa15.h)
     set(default_plugin_sources ${default_plugin_sources}
             ${PROJECT_SOURCE_DIR}/plugins/ua_securitypolicy_basic128rsa15.c)
+    set(default_plugin_headers ${default_plugin_headers}
+            ${PROJECT_SOURCE_DIR}/plugins/ua_securitypolicy_basic256sha256.h)
+    set(default_plugin_sources ${default_plugin_sources}
+            ${PROJECT_SOURCE_DIR}/plugins/ua_securitypolicy_basic256sha256.c)
 endif()
 
 if(UA_DEBUG_DUMP_PKGS)
